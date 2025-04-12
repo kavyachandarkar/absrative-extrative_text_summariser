@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Text Summarizer Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      background-color: #e6f0ff;
+    }
+
+    .sidebar {
+      width: 200px;
+      background-color: #004aad;
+      color: #fff;
+      padding: 20px;
+      position: fixed;
+      height: 100vh;
+    }
+
+    .sidebar h3 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 20px 0;
+      cursor: pointer;
+    }
+
+    .container {
+      margin-left: 220px;
+      width: calc(100% - 220px);
+      padding: 40px 20px;
+    }
+
+    .summarizer-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    .summarizer-card {
+      max-width: 800px;
+      width: 100%;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 30px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .summarizer-card h2 {
+      text-align: center;
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #004aad;
+    }
+
+    #inputText {
+      width: 100%;
+      height: 180px;
+      padding: 15px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      resize: vertical;
+      margin-bottom: 20px;
+    }
+
+    .summary-box {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      min-height: 120px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .animated-btn, .upload-label {
+      padding: 10px 20px;
+      background-color: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .upload-label {
+      display: inline-block;
+    }
+
+    .card-layout {
+      display: flex;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .card {
+      flex: 1;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .history-box, .settings-box, .theme-toggle {
+      margin-top: 40px;
+    }
+
+    .theme-toggle label {
+      cursor: pointer;
+    }
+
+    .score-display {
+      margin-top: 20px;
+    }
+
+    .loader .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4f46e5;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 60%;
+      border-radius: 12px;
+    }
+
+    .close {
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #toastContainer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h3>🧠 Summarizer</h3>
+    <ul>
+      <li onclick="scrollToSection('inputText')">Input</li>
+      <li onclick="scrollToSection('summary')">Summary</li>
+      <li onclick="scrollToSection('scoreDisplay')">Scores</li>
+      <li onclick="scrollToSection('history')">History</li>
+      <li onclick="scrollToSection('settings')">Settings</li>
+    </ul>
+  </div>
+
+  <div class="container">
+    <div class="summarizer-container">
+      <div class="summarizer-card">
+        <h2>Text Summarizer</h2>
+        <textarea id="inputText" placeholder="Paste or type your text here..."></textarea>
+
+        <details>
+          <summary>Optional Settings</summary>
+          <p>You can customize length and summary type here or in settings below.</p>
+        </details>
+
+        <div class="buttons">
+          <select id="summaryType">
+            <option value="extractive">Extractive</option>
+            <option value="abstractive">Abstractive</option>
+          </select>
+
+          <button id="summarize-btn" class="animated-btn">Summarize</button>
+          <label for="fileInput" class="upload-label">Upload PDF</label>
+          <input type="file" id="fileInput" accept=".pdf" style="display:none;" />
+        </div>
+
+        <div id="loader" class="loader" style="display:none;">
+          <div class="spinner"></div>
+        </div>
+
+        <progress id="progressBar" value="0" max="100" style="width:100%; display:none;"></progress>
+
+        <div id="statusMessage" class="status-message"></div>
+        <div id="summary" class="summary-box">Your summary will appear here...</div>
+
+        <!-- Translate to Hindi Button -->
+        <div class="buttons" style="margin-top: 10px;">
+          <button id="translate-btn" class="animated-btn">Translate to Hindi</button>
+        </div>
+
+        <!-- Translated Summary Output -->
+        <div class="summary-box" id="translated-text" style="margin-top: 10px; background-color: #f0f0f0;">
+          Hindi translation will appear here...
+        </div>
+
+        <div id="scoreDisplay" class="score-display"></div>
+
+        <div class="buttons">
+          <button onclick="copySummary()">Copy Summary</button>
+          <button onclick="downloadSummary()">Download Summary</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-layout">
+      <div class="card">
+        <h4>Tips</h4>
+        <p>Use clean, clear text for best results. Avoid lengthy PDFs with images.</p>
+      </div>
+      <div class="card">
+        <h4>Need Help?</h4>
+        <p>Hover over icons or check documentation for guidance.</p>
+      </div>
+    </div>
+
+    <div id="history" class="history-box">
+      <h4>History</h4>
+      <ul id="historyList"></ul>
+    </div>
+
+    <div id="settings" class="settings-box">
+      <h4>Settings</h4>
+      <label>Max Length:
+        <input type="number" id="maxLength" value="180">
+      </label>
+      <label>Min Length:
+        <input type="number" id="minLength" value="80">
+      </label>
+      <label>Summary Length:
+        <input type="range" id="lengthSlider" min="50" max="300" value="180" oninput="updateLengthLabel(this.value)">
+        <span id="lengthLabel">180</span> words
+      </label>
+    </div>
+
+    <div class="theme-toggle">
+      <label>
+        <input type="checkbox" onchange="toggleTheme()" /> 🌙 Enable Dark Mode
+      </label>
+    </div>
+  </div>
+
+  <div id="toastContainer"></div>
+
+  <div id="modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h4>About This App</h4>
+      <p>This text summarizer uses machine learning to condense large documents.</p>
+    </div>
+  </div>
+
+  <canvas id="summaryChart" style="margin-top: 40px;"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

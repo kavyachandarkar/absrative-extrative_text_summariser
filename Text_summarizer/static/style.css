@@ -1,0 +1,468 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #b3d4fc, #d1ecff);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 50px 20px;
+  color: #222;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.3s ease;
+}
+
+.container {
+  width: 100%;
+  max-width: 850px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  animation: fadeIn 0.6s ease;
+  transition: all 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 34px;
+  font-weight: 700;
+  color: #004aad;
+  animation: pulse 2s infinite;
+}
+
+textarea {
+  width: 100%;
+  height: 160px;
+  padding: 16px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  background-color: #fff;
+}
+
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.4);
+  background-color: #fdfdfd;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+button,
+.upload-label {
+  padding: 14px 22px;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover,
+.upload-label:hover {
+  background-color: #0056b3;
+  box-shadow: 0 8px 16px rgba(0, 91, 187, 0.3);
+  transform: translateY(-2px);
+}
+
+button::after,
+.upload-label::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.15);
+  transition: left 0.4s ease;
+}
+
+button:hover::after,
+.upload-label:hover::after {
+  left: 100%;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.summary-box {
+  background-color: #f4faff;
+  padding: 20px;
+  border-radius: 14px;
+  min-height: 80px;
+  white-space: pre-wrap;
+  font-size: 15px;
+  line-height: 1.6;
+  box-shadow: inset 0 0 10px rgba(0, 123, 255, 0.1);
+  transition: background-color 0.3s ease;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.status-message {
+  margin-top: 15px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.status-message.success {
+  color: #28a745;
+  animation: fadeIn 0.4s ease-in;
+}
+
+.status-message.error {
+  color: #dc3545;
+  animation: fadeIn 0.4s ease-in;
+}
+
+.theme-toggle {
+  margin-top: 25px;
+  font-size: 15px;
+  text-align: center;
+  color: #333;
+}
+
+.theme-toggle input {
+  margin-left: 10px;
+}
+
+.dark-mode {
+  background: linear-gradient(135deg, #1a2a3a, #101d2b);
+  color: #eee;
+}
+
+.dark-mode .container {
+  background-color: rgba(30, 30, 50, 0.95);
+  color: #eee;
+}
+
+.dark-mode textarea,
+.dark-mode .summary-box {
+  background-color: rgba(50, 50, 70, 0.95);
+  color: #ddd;
+  border: 1px solid #555;
+}
+
+.dark-mode button,
+.dark-mode .upload-label {
+  background-color: #444;
+  color: #eee;
+}
+
+.dark-mode button:hover,
+.dark-mode .upload-label:hover {
+  background-color: #666;
+  box-shadow: 0 6px 12px rgba(255, 255, 255, 0.15);
+}
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 200px;
+  height: 100%;
+  background: #004aad;
+  padding: 20px;
+  color: white;
+  z-index: 1000;
+}
+
+.sidebar h3 {
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar ul li {
+  margin: 10px 0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar ul li:hover {
+  text-decoration: underline;
+  transform: translateX(5px);
+}
+
+.topbar {
+  background: #003f88;
+  color: white;
+  padding: 12px 20px;
+  font-size: 18px;
+  margin-left: 200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeIn 1.2s ease-in;
+}
+
+.container {
+  margin-left: 220px;
+}
+
+.history-box,
+.settings-box {
+  margin-top: 20px;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 10px;
+  animation: fadeIn 0.6s ease;
+}
+
+.card-tip {
+  background-color: #e9f5ff;
+  padding: 10px 15px;
+  border-left: 4px solid #007bff;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #004a7c;
+  animation: fadeIn 1s ease;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #007bff;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.5s ease;
+}
+
+.modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 500px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(to right, #4facfe, #00f2fe);
+  animation: progressAnim 3s infinite;
+}
+
+@keyframes progressAnim {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.chart-container {
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.6s ease;
+}
+
+details {
+  margin-top: 20px;
+  background: #eef6ff;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+details[open] summary::after {
+  content: "▲";
+  float: right;
+}
+
+details summary::after {
+  content: "▼";
+  float: right;
+}
+
+details summary {
+  font-weight: 600;
+  cursor: pointer;
+}
+.summarizer-container {
+  display: flex;
+  justify-content: center;   /* Center horizontally */
+  align-items: flex-start;   /* Align from top */
+  padding: 40px 20px;        /* Top-bottom and side padding */
+  min-height: 100vh;
+  background: linear-gradient(to right, #004aad 0%, #f0f8ff 100%);
+}
+
+.summarizer-card {
+  max-width: 800px;
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 30px 40px;             /* Fixed the negative padding */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 40px;               /* Push it slightly down from top */
+}
+
+.summarizer-card h2 {
+  font-size: 28px;
+  color: #333;
+  text-align: center;
+}
+
+.summarizer-card textarea {
+  width: 100%;
+  height: 150px;
+  padding: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  resize: vertical;
+}
+
+.summarizer-card button {
+  align-self: flex-end;
+  padding: 12px 24px;
+  background-color: #4f46e5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.summarizer-card button:hover {
+  background-color: #3730a3;
+}
+#translatedSummary {
+  font-style: italic;
+  color: #444;
+}
+/* Example dark mode enhancements */
+body.dark-mode {
+  background-color: #0d1117;
+  color: #e6edf3;
+}
+
+.dark-mode .card,
+.dark-mode .summary-box,
+.dark-mode .history-entry,
+.dark-mode .tip-box,
+.dark-mode .settings-box {
+  background-color: #161b22;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.dark-mode .section-title {
+  color: #f0f6fc;
+  font-weight: 600;
+}
+
+.dark-mode input,
+.dark-mode textarea {
+  background-color: #0d1117;
+  color: #ffffff;
+  border: 1px solid #444c56;
+}
+
+.dark-mode .btn {
+  background-color: #238636;
+  color: white;
+  border: none;
+}
+
+.dark-mode .btn:hover {
+  background-color: #2ea043;
+}
+
